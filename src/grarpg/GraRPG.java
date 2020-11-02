@@ -10,7 +10,6 @@ public class GraRPG {
         
         
         R.CreateCharacter();
-        R.Hero();
         R.Gameplay();
         
         

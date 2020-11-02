@@ -10,14 +10,17 @@ public class Game {
     Character heros = new Character();
     Character enemy = new Character();
     
+    Random rand =  new Random();
+    Scanner scan = new Scanner(System.in);
+    
     int licznikprzeciwnika=1;  
     int zmiennapomocnicza=1; 
     int lvlpostac=1;
     int HPboostHeros=1, HPboostEnemy=1, DMGboostHeros=1, DMGboostEnemy=1;
+    double HP1, HP2, DMG1, DMG2;
+    int aim, zmienna, tura;
     
     public void CreateCharacter(){
-        
-        Scanner scan = new Scanner(System.in);
         
         System.out.println("Wybierz imię: ");
         String name=scan.nextLine();
@@ -60,10 +63,7 @@ public class Game {
     
     public void CreateEnemy(){
         
-        Random rand = new Random();
         int klasa = rand.nextInt(4)+1;
-        
-        Scanner scan = new Scanner(System.in);
 
         enemy.setName("Przeciwnik: ");
         
@@ -80,23 +80,23 @@ public class Game {
         
         if(klasa==1){
             enemy.setHeroclass("Elf");
-            enemy.setHP(200*HPboostEnemy);
-            enemy.setDMG(50*DMGboostEnemy);
+            enemy.setHP(300*HPboostEnemy);
+            enemy.setDMG(70*DMGboostEnemy);
         }
         else if(klasa==2){
             enemy.setHeroclass("Ork");
-            enemy.setHP(500*HPboostEnemy);
-            enemy.setDMG(10*DMGboostEnemy);
+            enemy.setHP(700*HPboostEnemy);
+            enemy.setDMG(30*DMGboostEnemy);
         }
         else if(klasa==3){
             enemy.setHeroclass("Człowiek");
-            enemy.setHP(300*HPboostEnemy);
-            enemy.setDMG(20*DMGboostEnemy);
+            enemy.setHP(500*HPboostEnemy);
+            enemy.setDMG(50*DMGboostEnemy);
         }
         else if(klasa==4){
             enemy.setHeroclass("Mag");
-            enemy.setHP(100*HPboostEnemy);
-            enemy.setDMG(70*DMGboostEnemy);
+            enemy.setHP(200*HPboostEnemy);
+            enemy.setDMG(90*DMGboostEnemy);
         }
         
         System.out.println("Twój przeciwnik to: ");
@@ -121,10 +121,7 @@ public class Game {
     
     public void LvlUp(){
         
-        Scanner scan=new Scanner(System.in);
-        
-        Random lvl = new Random();
-        int x = lvl.nextInt(1);
+        int x = rand.nextInt(1);
         int HPzmienna, DMGzmienna;
         
         if(x==0)
@@ -158,17 +155,132 @@ public class Game {
         
     }
     
+    public void Atak()
+    {
+        aim=rand.nextInt(100)+1;
+        
+        if(tura==0)
+        {
+            System.out.println("1-Atak precyzyjny  |Szansa trafienia 80%   DMG 80% |");
+            System.out.println("2-Atak normalny    |Szansa trafienia 65%   DMG 100%|");
+            System.out.println("3-Atak ciężki      |Szansa trafienia 50%   DMG 120%|");
+            zmienna = scan.nextInt();
+            
+            if(zmienna==1)
+            {
+                if(aim<=80)
+                {
+                    System.out.print(HP2 + " - " + DMG1 + "*0.8 = ");
+                    HP2=HP2-(DMG1*0.8);
+                    System.out.println(HP2 + " : HP Przeciwnika");
+                    System.out.println("");
+                }
+                else if(aim>80)
+                {
+                    System.out.println("");
+                    System.out.println("PUDŁO");
+                    System.out.println("");
+                }
+            }
+            else if(zmienna==2)
+            {
+                if(aim<=65)
+                {
+                    System.out.print(HP2 + " - " + DMG1 + " = ");
+                    HP2=HP2-(DMG1);
+                    System.out.println(HP2 + " : HP Przeciwnika");
+                    System.out.println("");
+                }
+                else if(aim>65)
+                {
+                    System.out.println("");
+                    System.out.println("PUDŁO");
+                    System.out.println("");
+                }
+            }
+            else if(zmienna==3)
+            {
+                if(aim<=50)
+                {
+                    System.out.print(HP2 + " - " + DMG1 + "*1.2 = ");
+                    HP2=HP2-(DMG1*1.2);
+                    System.out.println(HP2 + " : HP Przeciwnika");
+                    System.out.println("");
+                }
+                else if(aim>50)
+                {
+                    System.out.println("");
+                    System.out.println("PUDŁO");
+                    System.out.println("");
+                }
+            }
+            
+            tura++;
+        }
+        else if(tura==1)
+        {
+            zmienna=rand.nextInt(2)+1;
+            
+            if(zmienna==1)
+            {
+                if(aim<=80)
+                {
+                    System.out.print(HP1 + " - " + DMG2 + "*0.8 = ");
+                    HP1=HP1-(DMG2*0.8);
+                    System.out.println(HP1 + " : HP Gracza");
+                    System.out.println("");
+                }
+                else if(aim>80)
+                {
+                    System.out.println("");
+                    System.out.println("PUDŁO");
+                    System.out.println("");
+                }
+            }
+            else if(zmienna==2)
+            {
+                if(aim<=65)
+                {
+                    System.out.print(HP1 + " - " + DMG2 + " = ");
+                    HP1=HP1-(DMG2);
+                    System.out.println(HP1 + " : HP Gracza");
+                    System.out.println("");
+                }
+                else if(aim>65)
+                {
+                    System.out.println("");
+                    System.out.println("PUDŁO");
+                    System.out.println("");
+                }
+            }
+            else if(zmienna==3)
+            {
+                if(aim<=50)
+                {
+                    System.out.print(HP1 + " - " + DMG2 + "*1.2 = ");
+                    HP1=HP1-(DMG2*1.2);
+                    System.out.println(HP1 + " : HP Gracza");
+                    System.out.println("");
+                }
+                else if(aim>50)
+                {
+                    System.out.println("");
+                    System.out.println("PUDŁO");
+                    System.out.println("");
+                }
+            }
+            
+            tura--;
+        }    
+            
+    }
+    
     public void Gameplay()
     { 
-        Scanner scan = new Scanner(System.in);
 
-        int HP1;
-        int HP2;
-        int DMG1;
-        int DMG2;
-        
         do
-        {    
+        {   
+            
             System.out.println("---------------------------");
             CreateEnemy();
             System.out.println("---------------------------");
@@ -182,23 +294,18 @@ public class Game {
             
             System.out.println("WALKA: " + licznikprzeciwnika);
             
-            /*System.out.println(HP1 + " HP1");  //Potem usunąć tylko do podglądu
-            System.out.println(HP2 + " HP2");
-            System.out.println(DMG1 + " DMG1");
-            System.out.println(DMG2 + " DMG2");
-            System.out.println("");*/
-            
             do
                 {
-                    
-                    System.out.println("Atakuje Gracz: " + HP2 + " - " + DMG1);
-                    System.out.println(HP2=HP2-DMG1);
-                    System.out.println("Atakuje Przeciwnik: " + HP1 + " - " + DMG2);
-                    System.out.println(HP1=HP1-DMG2);
-                    
-                    System.out.println("");
+                    Atak(); 
 
                 }while(HP2>0 && HP1>0);
+            
+            if(HP2>0 && HP1<=0)
+            {
+                System.out.println("PRZEGRAŁEŚ");
+                break;
+            }
+            
             
             HP1=heros.getHP();
             
@@ -209,6 +316,8 @@ public class Game {
             System.out.println("1-TAK");
             
             int zmienna = scan.nextInt();
+            
+            
             
             if(zmienna==1)
             {
