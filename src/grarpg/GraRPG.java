@@ -8,8 +8,11 @@ public class GraRPG {
     
     public static void main(String[] args) {
         
-        R.CreateCharacter();    
-        R.CreateEnemy();
+        
+        R.CreateCharacter();
+        R.Hero();
+        R.Gameplay();
+        
         
     }
     
