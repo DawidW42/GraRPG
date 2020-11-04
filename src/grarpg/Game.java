@@ -4,6 +4,7 @@ package grarpg;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
@@ -13,6 +14,9 @@ public class Game {
     
     Character heros = new Character();
     Character enemy = new Character();
+    
+    Weapon weapon = new Weapon();
+    Armor armor = new Armor();
     
     List listArmor = new ArrayList();
     List listWeapon = new ArrayList();
@@ -28,7 +32,7 @@ public class Game {
     public void CreateCharacter() {
         
         System.out.println("Wybierz imię: ");
-        String name=scan.nextLine();
+        String name=scan.next();
 
         heros.setName(name);
         
@@ -416,7 +420,7 @@ public class Game {
         
         for(int i=0; i<DL1; i++)
         {
-            lineWeapon=RAF1.readLine();
+            lineWeapon=RAF2.readLine();
             listWeapon.add(lineWeapon);
         }
     }
@@ -426,8 +430,11 @@ public class Game {
         System.out.println("WITAJ W SKLEPIE!");
         System.out.println("1-Sklep z Armorem  2-Sklep z Weapons");
         int x=scan.nextInt();
-        String line;
+        String line=null, line2=null, weaponName, armorName;
+        int armorHP, weaponDMG, armorPrice, weaponPrice;      
+        int meter=1, y;
         
+        String[] tab = null;
                 
         switch(x)
         {
@@ -435,24 +442,93 @@ public class Game {
             {
                 for(int i=lvlshop; i<(lvlshop+3); i++)
                 {
+                    System.out.println("   Zbroja:           HP:    Cena:");
                     line = (String) listArmor.get(i);
+                    System.out.print(meter + ". ");
                     System.out.println(line);
+                    meter++;
+                }
+                System.out.println("");
+                System.out.println("Co kupujesz?");
+                y=scan.nextInt();
+                
+                switch(y)
+                {
+                    case 1:
+                    {
+                        line2 = (String) listArmor.get(1);
+                        tab = line2.split(" ");
+                        break;
+                    }
+                    case 2:
+                    {
+                        line2 = (String) listArmor.get(2);
+                        tab = line2.split(" ");
+                        break;
+                    }
+                    case 3:
+                    {
+                        line2 = (String) listArmor.get(3);
+                        tab = line2.split(" ");
+                        break;
+                    }   
                 }
                 
+                armorName=tab[0];
+                armorHP=Integer.parseInt(tab[1]);
+                armorPrice=Integer.parseInt(tab[2]);
+                
+                armor.setArmorName(armorName);
+                armor.setArmorBoost(armorHP);               
+                armor.setPrice(armorPrice);
+                
+                System.out.println(armor.getArmorName());
                 break;
             }
             case 2:
             {
                 for(int j=lvlshop; j<(lvlshop+3); j++)
                 {
+                    System.out.println("   Broń:              DMG:    Cena:");
+                    System.out.print(meter + ". ");
                     line = (String) listWeapon.get(j);
                     System.out.println(line);
+                    meter++;
                 }
+                System.out.println("");
+                System.out.println("Co kupujesz?");
+                y=scan.nextInt();
+                
+                switch(y)
+                {
+                    case 1:
+                    {
+                        line2 = (String) listWeapon.get(1);
+                        tab = line2.split(" ");
+                        break;
+                    }
+                    case 2:
+                    {
+                        line2 = (String) listWeapon.get(2);
+                        tab = line2.split(" ");
+                        break;
+                    }
+                    case 3:
+                    {
+                        line2 = (String) listWeapon.get(3);
+                        tab = line2.split(" ");
+                        break;
+                    }   
+                }
+                
+                //skopiować jak armor wyżej 
+                
                 
                 break;
             }
         }
         
+        meter=1;
         lvlshop+=3;
     }
     

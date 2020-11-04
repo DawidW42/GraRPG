@@ -1,1 +1,3 @@
-sex
+P³ytowaZbroja      50    500
+SzataMaga          10    200
+Kolczuga           20    300

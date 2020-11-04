@@ -1,0 +1,3 @@
+WielkiMiecz 30 400
+KijMaga 50 600
+Kusza 20 200

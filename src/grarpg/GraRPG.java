@@ -1,17 +1,22 @@
 
 package grarpg;
 
+import java.io.IOException;
+
 
 public class GraRPG {
 
     static Game R = new Game();
     
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
+        
+        R.ShopList();// test
+        R.Shop();//test
         
         
         do
         {
-            
+        
         R.CreateCharacter();
         R.Gameplay();
         
