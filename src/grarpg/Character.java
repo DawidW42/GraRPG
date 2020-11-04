@@ -6,9 +6,12 @@ public class Character {
     
         private String name;
         private String heroclass;
-        private int HP;
-        private int DMG;
+        private double HP;
+        private double DMG;
         private int lvl;
+        private int exp;
+        private String Armor;
+        private String Weapon;
     
      public Character(String name, String nazwisko, String heroclass, int HP, int DMG, int lvl, String Broń) {
         this.name = name;
@@ -39,19 +42,19 @@ public class Character {
         this.heroclass = heroclass;
     }
 
-    public int getHP() {
+    public double getHP() {
         return HP;
     }
 
-    public void setHP(int HP) {
+    public void setHP(double HP) {
         this.HP = HP;
     }
 
-    public int getDMG() {
+    public double getDMG() {
         return DMG;
     }
 
-    public void setDMG(int DMG) {
+    public void setDMG(double DMG) {
         this.DMG = DMG;
     }
 
@@ -63,5 +66,29 @@ public class Character {
         this.lvl = lvl;
     }
 
+    public int getExp() {
+        return exp;
+    }
+
+    public void setExp(int exp) {
+        this.exp = exp;
+    }
+
+    public String getArmor() {
+        return Armor;
+    }
+
+    public void setArmor(String Armor) {
+        this.Armor = Armor;
+    }
+
+    public String getWeapon() {
+        return Weapon;
+    }
+
+    public void setWeapon(String Weapon) {
+        this.Weapon = Weapon;
+    }
+    
     
 }
