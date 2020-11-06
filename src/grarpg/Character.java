@@ -12,13 +12,22 @@ public class Character {
         private int exp;
         private String Armor;
         private String Weapon;
+        private int  money;
     
-     public Character(String name, String nazwisko, String heroclass, int HP, int DMG, int lvl, String Broń) {
+     public Character(String name, String nazwisko, String heroclass, int HP, int DMG, int lvl, String Broń, int money) {
         this.name = name;
         this.heroclass = heroclass;
         this.HP = HP;
         this.DMG = DMG;
         this.lvl = lvl;
+    }
+
+    public int getMoney() {
+        return money;
+    }
+
+    public void setMoney(int money) {
+        this.money = money;
     }
 
     public Character() {

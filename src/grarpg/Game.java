@@ -27,7 +27,7 @@ public class Game {
     int licznikprzeciwnika=0, lvlpostac=1, again;
     double HPboostHeros=1, HPboostEnemy=1, DMGboostHeros=1, DMGboostEnemy=1;
     double HP1, HP2, DMG1, DMG2;
-    int aim, zmienna, tura, exp=0, lvlmax=50, lvlshop=0;
+    int aim, zmienna, tura=0, exp=0, lvlmax=50, lvlshop=0, coins=200;
     
     public void CreateCharacter() {
         
@@ -45,7 +45,7 @@ public class Game {
         
         int klasa=scan.nextInt();
 
-        switch(klasa)
+        switch(klasa)  //Wybór klasy postaci
         {
         
             case 1:
@@ -90,6 +90,7 @@ public class Game {
                 heros.setHeroclass("GODMODE");
                 heros.setHP(9999999);
                 heros.setDMG(9999999);
+                heros.setMoney(999999999);
 
                 heros.setWeapon("Boski kij");
                 break;
@@ -100,6 +101,9 @@ public class Game {
              
         heros.setLvl(1);
         heros.setExp(0);
+        
+        weapon.setWeaponBoost(0);  //zapobiega błędowi, dodaje wartość do broni i armora
+        armor.setArmorBoost(0);
         
         heros.setArmor("Łachmany");
     }
@@ -112,7 +116,7 @@ public class Game {
         
         enemy.setLvl(lvlpostac);
         
-        switch(klasa)
+        switch(klasa)  //randomowy wybór przeciwnika
         {
         
             case 1:
@@ -162,9 +166,9 @@ public class Game {
         System.out.println("LVL: " + heros.getLvl());
         System.out.println("EXP: " + heros.getExp() + "/" + lvlmax);
         System.out.println("Zbroja: " + heros.getArmor());
-        System.out.println("HP: " + heros.getHP());
+        System.out.println("HP: " + heros.getHP() + " + " + armor.getArmorBoost());
         System.out.println("Broń: " + heros.getWeapon());
-        System.out.println("DMG: " + heros.getDMG());
+        System.out.println("DMG: " + heros.getDMG() + " + " + weapon.getWeaponBoost());
         System.out.println("");
     }
     
@@ -173,7 +177,7 @@ public class Game {
         int x = rand.nextInt(1);
         double HPzmienna, DMGzmienna;
         
-        if(x==0)
+        if(x==0)  //randomowy boost przeciwników po lvlup
         {
              HPboostEnemy+=0.2;
         }
@@ -187,7 +191,7 @@ public class Game {
         System.out.println("1-HP    2-DMG");
         int zmienna = scan.nextInt();
         
-        if(zmienna==1)
+        if(zmienna==1) //wybór boosta przez gracza dla postaci 
         {
             HPboostHeros+=0.2;
             HPzmienna=heros.getHP();
@@ -202,7 +206,7 @@ public class Game {
             heros.setDMG(DMGzmienna);
         }
         
-        lvlmax*=2;        
+        lvlmax*=2;  //zwiększa porzebny exp do lvlupa      
         lvlpostac++;
         
     }
@@ -211,7 +215,7 @@ public class Game {
     {
         aim=rand.nextInt(100)+1;
         
-        switch(tura)
+        switch(tura)  // zmiana ataku gracza i przeciwnika
         {
             case 0:
             {
@@ -220,14 +224,14 @@ public class Game {
                 System.out.println("3-Atak ciężki      |Szansa trafienia 50%   DMG 120%|");
                 zmienna = scan.nextInt();
 
-                switch(zmienna)
+                switch(zmienna) // wybór ataku
                 {
                     case 1:
                     {
                         if(aim<=80)
                         {
-                            System.out.print(HP2 + " - " + DMG1 + "*0.8 = ");
-                            HP2=HP2-(DMG1*0.8);
+                            System.out.print(HP2 + " - " + "(" + DMG1 + " + " + weapon.getWeaponBoost() + "}" + "*0.8 = ");
+                            HP2=HP2-((DMG1 + weapon.getWeaponBoost())*0.8);
                             System.out.println(HP2 + " : HP Przeciwnika");
                             System.out.println("");
                         }
@@ -243,8 +247,8 @@ public class Game {
                     {
                         if(aim<=65)
                         {
-                            System.out.print(HP2 + " - " + DMG1 + " = ");
-                            HP2=HP2-(DMG1);
+                            System.out.print(HP2 + " - " + "(" + DMG1 + " + " + weapon.getWeaponBoost() + "}" + " = ");
+                            HP2=HP2-(DMG1 + weapon.getWeaponBoost());
                             System.out.println(HP2 + " : HP Przeciwnika");
                             System.out.println("");
                         }
@@ -260,8 +264,8 @@ public class Game {
                     {
                         if(aim<=50)
                         {
-                            System.out.print(HP2 + " - " + DMG1 + "*1.2 = ");
-                            HP2=HP2-(DMG1*1.2);
+                            System.out.print(HP2 + " - " + "(" + DMG1 + " + " + weapon.getWeaponBoost() + "}" + "*1.2 = ");
+                            HP2=HP2-((DMG1 + weapon.getWeaponBoost())*1.2);
                             System.out.println(HP2 + " : HP Przeciwnika");
                             System.out.println("");
                         }
@@ -287,8 +291,8 @@ public class Game {
                     {
                         if(aim<=80)
                         {
-                            System.out.print(HP1 + " - " + DMG2 + "*0.8 = ");
-                            HP1=HP1-(DMG2*0.8);
+                            System.out.print("(" + HP1 + " + " + armor.getArmorBoost() + ")" + " - " + DMG2 + "*0.8 = ");
+                            HP1=(HP1 + armor.getArmorBoost())-(DMG2*0.8);
                             System.out.println(HP1 + " : HP Gracza");
                             System.out.println("");
                         }
@@ -304,8 +308,8 @@ public class Game {
                     {
                         if(aim<=65)
                         {
-                            System.out.print(HP1 + " - " + DMG2 + " = ");
-                            HP1=HP1-(DMG2);
+                            System.out.print("(" + HP1 + " + " + armor.getArmorBoost() + ")" + " - " + DMG2 + " = ");
+                            HP1=(HP1 + armor.getArmorBoost())-(DMG2);
                             System.out.println(HP1 + " : HP Gracza");
                             System.out.println("");
                         }
@@ -321,8 +325,8 @@ public class Game {
                     {
                         if(aim<=50)
                         {
-                            System.out.print(HP1 + " - " + DMG2 + "*1.2 = ");
-                            HP1=HP1-(DMG2*1.2);
+                            System.out.print("(" + HP1 + " + " + armor.getArmorBoost() + ")" + " - " + DMG2 + "*1.2 = ");
+                            HP1=(HP1 + armor.getArmorBoost())-(DMG2*1.2);
                             System.out.println(HP1 + " : HP Gracza");
                             System.out.println("");
                         }
@@ -363,8 +367,13 @@ public class Game {
             do
             {
                 Atak();
+                
+                if(tura==0)
+                {
+                    coins-=10; //zmiejszenie pieniędzy za każdy atak przeciwnika
+                }
 
-            }while(HP2>0 && HP1>0);
+            }while(HP2>0 && HP1>0); // pętla zakończy się po porażce jednej z postaci
                       
             
             if(HP2>0 && HP1<=0)
@@ -376,35 +385,40 @@ public class Game {
                 
                 break;
             }
-                        
-            HP1=heros.getHP();
-            exp+=10;
-            heros.setExp(exp);
-            
-            if(exp==lvlmax)
+            else
             {
-                LvlUp();
-                lvlmax*=2;
-            }
+                HP1=heros.getHP(); //przypisanienowego HP pieniędzy expa
+                exp+=10;
+                heros.setExp(exp);
+                coins+=10;
+                heros.setMoney(coins);
 
-            System.out.println("Poddajesz się?");
-            System.out.println("1-TAK");
-            
-            int zmienna = scan.nextInt();
-            
-            
-            
-            if(zmienna==1)
-            {
-                break;
+                if(exp==lvlmax) //przyznaje lvlup
+                {
+                    LvlUp();
+                }
+
+                System.out.println("1-Poddaj się    2-SKLEP");
+
+                int zmienna = scan.nextInt();
+
+                if(zmienna==1)
+                {
+                    break;
+                }
+                else if(zmienna==2)
+                {
+                    Shop();
+                }
             }
-            
             
         }while(true);
     }
     
     public void ShopList() throws IOException
     {
+        //tworzy dwie listy przedmiotów z plików tekstowych
+        
         RandomAccessFile RAF1 = new RandomAccessFile("Armor.txt","r");
         RandomAccessFile RAF2 = new RandomAccessFile("Weapon.txt","r");
         
@@ -430,106 +444,160 @@ public class Game {
         System.out.println("WITAJ W SKLEPIE!");
         System.out.println("1-Sklep z Armorem  2-Sklep z Weapons");
         int x=scan.nextInt();
+        
         String line=null, line2=null, weaponName, armorName;
         int armorHP, weaponDMG, armorPrice, weaponPrice;      
-        int meter=1, y;
+        int meter=1, y, exit=0;
         
         String[] tab = null;
                 
-        switch(x)
+        switch(x) //wybór sklepu
         {
             case 1:
             {
-                for(int i=lvlshop; i<(lvlshop+3); i++)
+                for(int i=lvlshop; i<(lvlshop+3); i++) //wypisanie przedmiotów do sklepu
                 {
-                    System.out.println("   Zbroja:           HP:    Cena:");
+                    System.out.println("   Zbroja-HP-Cena");
                     line = (String) listArmor.get(i);
                     System.out.print(meter + ". ");
                     System.out.println(line);
                     meter++;
                 }
-                System.out.println("");
+                
+                do
+                {
+                System.out.println("4-Wyjdź ze sklepu");
+                                System.out.println("");
                 System.out.println("Co kupujesz?");
                 y=scan.nextInt();
                 
-                switch(y)
+                switch(y) //wybór przedmiotu ze sklepu
                 {
                     case 1:
+                    {
+                        line2 = (String) listArmor.get(0);
+                        tab = line2.split(" ");
+                        break;
+                    }
+                    case 2:
                     {
                         line2 = (String) listArmor.get(1);
                         tab = line2.split(" ");
                         break;
                     }
-                    case 2:
+                    case 3:
                     {
                         line2 = (String) listArmor.get(2);
                         tab = line2.split(" ");
                         break;
                     }
-                    case 3:
+                    case 4:
                     {
-                        line2 = (String) listArmor.get(3);
+                        line2 = "Test 0 0";   //zapobiega błedowi gdzie tab[] nic nie przypisuje
                         tab = line2.split(" ");
-                        break;
-                    }   
+                        exit=1;
+                    } 
                 }
-                
-                armorName=tab[0];
+                                
+                armorName=tab[0];  // przypisanie wartości z pliku do zmiennych
                 armorHP=Integer.parseInt(tab[1]);
                 armorPrice=Integer.parseInt(tab[2]);
                 
+                if(heros.getMoney()>=armorPrice) //jeśli warunek jest spełniony zapisuje cechy przedmiotu do obiektu 
+                {
                 armor.setArmorName(armorName);
                 armor.setArmorBoost(armorHP);               
-                armor.setPrice(armorPrice);
+                armor.setArmorPrice(armorPrice);
                 
-                System.out.println(armor.getArmorName());
+                heros.setArmor(armorName);
+                
+                break;
+                }
+                else if(exit==1) //wyjście przy braku zakupu
+                {
+                    exit=0;
+                    break;     
+                }
+                else
+                {
+                    System.out.println("Nie masz tyle pieniędzy wybierz coś innego"); //zapobiega kupna przedmiotu bez pieniędzy
+                }
+                
+                }while(true);
+                
                 break;
             }
-            case 2:
+            case 2:  
             {
-                for(int j=lvlshop; j<(lvlshop+3); j++)
+                for(int j=lvlshop; j<(lvlshop+3); j++) //wypisanie przedmiotów do sklepu
                 {
-                    System.out.println("   Broń:              DMG:    Cena:");
+                    System.out.println("   Broń-DMG-Cena");
                     System.out.print(meter + ". ");
                     line = (String) listWeapon.get(j);
                     System.out.println(line);
-                    meter++;
+                    meter++; //licznik przedmiotów
                 }
                 System.out.println("");
+                System.out.println("4-Wyjdź ze sklepu");
                 System.out.println("Co kupujesz?");
                 y=scan.nextInt();
                 
-                switch(y)
+                switch(y) 
                 {
                     case 1:
                     {
-                        line2 = (String) listWeapon.get(1);
+                        line2 = (String) listWeapon.get(0);
                         tab = line2.split(" ");
                         break;
                     }
                     case 2:
                     {
-                        line2 = (String) listWeapon.get(2);
+                        line2 = (String) listWeapon.get(1);
                         tab = line2.split(" ");
                         break;
                     }
                     case 3:
                     {
-                        line2 = (String) listWeapon.get(3);
+                        line2 = (String) listWeapon.get(2);
                         tab = line2.split(" ");
                         break;
-                    }   
+                    }
+                    case 4: 
+                    {
+                        line2 = "Test 0 0";   //zapobiega błedowi gdzie tab[] nic nie przypisuje
+                        tab = line2.split(" ");
+                        exit=1;
+                    } 
                 }
                 
-                //skopiować jak armor wyżej 
+                weaponName=tab[0]; // przypisanie wartości z pliku do zmiennych
+                weaponDMG=Integer.parseInt(tab[1]);
+                weaponPrice=Integer.parseInt(tab[2]);
                 
+                if(heros.getMoney()>=weaponPrice) //jeśli warunek jest spełniony zapisuje cechy przedmiotu do obiektu
+                {
+                weapon.setWeaponName(weaponName);
+                weapon.setWeaponBoost(weaponPrice);
+                weapon.setWeaponPrice(weaponPrice);
+                
+                heros.setWeapon(weaponName);
+                }
+                else if(exit==1) //wyjście przy braku zakupu
+                {
+                    exit=0;
+                    break;
+                }
+                else
+                {
+                    System.out.println("Nie masz tyle pieniędzy wybierz coś innego");  //zapobiega kupna przedmiotu bez pieniędzy
+                }
                 
                 break;
             }
         }
         
         meter=1;
-        lvlshop+=3;
+        lvlshop+=3; //pomaga w wczytaniu kolejnych przedmiotów ze sklepu
     }
     
 }

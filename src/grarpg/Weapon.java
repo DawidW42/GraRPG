@@ -8,12 +8,12 @@ public class Weapon {
     
     private String weaponName;
     private int weaponBoost;
-    private int price;
+    private int weaponprice;
 
     public Weapon(String weaponName, int weaponBoost, int price) {
         this.weaponName = weaponName;
         this.weaponBoost = weaponBoost;
-        this.price = price;
+        this.weaponprice = price;
     }
     
     public Weapon() {
@@ -35,12 +35,12 @@ public class Weapon {
         this.weaponBoost = weaponBoost;
     }
 
-    public int getPrice() {
-        return price;
+    public int getWeaponPrice() {
+        return weaponprice;
     }
 
-    public void setPrice(int price) {
-        this.price = price;
+    public void setWeaponPrice(int price) {
+        this.weaponprice = price;
     }
     
     

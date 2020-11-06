@@ -6,12 +6,12 @@ public class Armor {
     
     private String armorName;
     private int armorBoost;
-    private int price;
+    private int armorprice;
 
     public Armor(String armorName, int armorBoost, int price) {
         this.armorName = armorName;
         this.armorBoost = armorBoost;
-        this.price = price;
+        this.armorprice = price;
     }
 
     public Armor() {
@@ -33,12 +33,12 @@ public class Armor {
         this.armorBoost = armorBoost;
     }
 
-    public int getPrice() {
-        return price;
+    public int getArmorPrice() {
+        return armorprice;
     }
 
-    public void setPrice(int price) {
-        this.price = price;
+    public void setArmorPrice(int price) {
+        this.armorprice = armorprice;
     }
     
     

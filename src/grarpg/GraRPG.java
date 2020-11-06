@@ -10,9 +10,7 @@ public class GraRPG {
     
     public static void main(String[] args) throws IOException {
         
-        R.ShopList();// test
-        R.Shop();//test
-        
+        R.ShopList();
         
         do
         {
