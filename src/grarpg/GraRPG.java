@@ -11,12 +11,12 @@ public class GraRPG {
     public static void main(String[] args) throws IOException {
         
         R.ShopList();
-        
+        R.Map();
         do
         {
         
         R.CreateCharacter();
-        R.Gameplay();
+        R.ChapterOne();
         
         if(R.again==1)
         {

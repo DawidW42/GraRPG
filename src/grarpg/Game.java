@@ -1,6 +1,7 @@
 
 package grarpg;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.ArrayList;
@@ -15,11 +16,14 @@ public class Game {
     Character heros = new Character();
     Character enemy = new Character();
     
+    String[][] MapTab = new String[5][5];
+    
     Weapon weapon = new Weapon();
     Armor armor = new Armor();
     
     List listArmor = new ArrayList();
     List listWeapon = new ArrayList();
+    List list = new ArrayList();
     
     Random rand =  new Random();
     Scanner scan = new Scanner(System.in);
@@ -28,6 +32,10 @@ public class Game {
     double HPboostHeros=1, HPboostEnemy=1, DMGboostHeros=1, DMGboostEnemy=1;
     double HP1, HP2, DMG1, DMG2;
     int aim, zmienna, tura=0, exp=0, lvlmax=50, lvlshop=0, coins=200;
+    int enemyAmount;
+    int doorU, doorL, doorR, doorD; //0,1,2,3
+    String lineDoor="";
+    int horizontal=0, vertical=0;
     
     public void CreateCharacter() {
         
@@ -106,6 +114,334 @@ public class Game {
         armor.setArmorBoost(0);
         
         heros.setArmor("Łachmany");
+    }
+    
+    public void RL() //metoda sprawdzająca czy drzwi na siebie nachodzą z prawej i lewej
+    {
+        switch(doorR) //jeśli w poprzednim pokoju drzwi z prawej to tu z lewej
+                    {
+                        case 0:
+                        {
+                            lineDoor+="0 ";
+                            break;
+                        }
+                        case 1:
+                        {
+                            lineDoor+="1 ";
+                            break;
+                        }
+                    }
+    }
+    
+    public void UD() //metoda sprawdzająca czy drzwi na siebie nachodzą na dole i na górze 
+    {
+        switch(doorD) //jeśli w poprzednim pokoju drzwi na dole to tu u góry
+                    {
+                        case 0:
+                        {
+                            lineDoor+="0 ";
+                            break;
+                        }
+                        case 1:
+                        {
+                            lineDoor+="1 ";
+                            break;
+                        }
+                    }
+    }
+    
+    public void RandR() //randomowe drzwi z prawej
+    {
+        doorR =  rand.nextInt(2);
+                    switch(doorR)
+                    {
+                        case 0:
+                        {
+                            lineDoor+="0 ";
+                            break;
+                        }
+                        case 1:
+                        {
+                            lineDoor+="1 ";
+                            break;
+                        }
+                    }
+    }
+    
+    public void RandD() //randomowe drzwi z dołu
+    {
+        doorD =  rand.nextInt(2);
+                    switch(doorD)
+                    {
+                        case 0:
+                        {
+                            lineDoor+="1 ";
+                            break;
+                        }
+                        case 1:
+                        {
+                            lineDoor+="0 ";
+                            break;
+                        }
+                    }
+    }
+    
+    public void Map() throws IOException //przemyslec 
+    {
+ 
+        RandomAccessFile RAF = new RandomAccessFile("MapRoom.txt","r");
+        long DL=RAF.length();
+        String line;
+        
+        
+        for(int j=0; j<DL; j++)
+        {
+            line=RAF.readLine();
+            list.add(line);
+        }
+              
+        //int doorU, doorL, doorR, doorD; //0,1,2,3
+        
+        for(int w=0; w<5; w++)
+        {
+            for(int e=0; e<5; e++)
+            {
+                if(w==0 && e==0) //tab[0][0]
+                {
+                    lineDoor+="0 ";
+                    lineDoor+="0 ";
+                    
+                    RandR();
+                    
+                    RandD();
+                   
+                }              
+                else if(w==0 && e!=0 && e!=4) //tab[0][1-3]
+                {
+                    lineDoor+="0 ";
+                    
+                    RL();
+                    
+                    RandR();
+                    
+                    RandD();
+                    
+                }               
+                else if(w==0 && e==4)
+                {
+                    lineDoor+="0 ";
+                    
+                    RL();
+                       
+                    lineDoor+="0 ";                  
+                    
+                    RandD();
+                }
+                else if(w!=0 && w!=4 && e==0)
+                {
+                    UD();
+                    
+                    lineDoor+="0 ";  
+                    
+                    RandR();
+                    
+                    RandD();
+                    
+                }
+                else if(w!=0 && w!=4 && e!=0 && e!=4)
+                {
+                    UD();
+                    
+                    RL();
+                    
+                    RandR();
+                    
+                    RandD();
+                }
+                else if(w!=0 && w!=4 && e==4)
+                {
+                    UD();
+                    
+                    RL();
+                    
+                    lineDoor+="0 ";
+                    
+                    RandD();
+                    
+                }
+                else if(w==4 && e==0)
+                {
+                    UD();
+                    
+                    lineDoor+="0 ";
+                    
+                    RandR();
+                    
+                    lineDoor+="0 ";
+                    
+                }
+                else if(w==4 && e!=0 && e!=4)
+                {
+                    UD();
+                    
+                    RL();
+                    
+                    RandR();
+                    
+                    lineDoor+="0 ";
+                    
+                }
+                else if(w==4 && e==4)
+                {
+                    UD();
+                    
+                    RL();
+                    
+                    lineDoor+="0 ";
+                    
+                    lineDoor+="0 ";
+                    
+                }
+                              
+                MapTab[w][e]=lineDoor;
+                lineDoor="";
+            }
+        }
+        
+    }
+    
+    public void MapRoom()
+    {
+        
+        String[] tab = null;
+        
+        String line=MapTab[vertical][horizontal];
+        tab = line.split(" ");
+        
+        int U=Integer.parseInt(tab[0]);
+        int L=Integer.parseInt(tab[1]);
+        int R=Integer.parseInt(tab[2]);
+        int D=Integer.parseInt(tab[3]);
+        
+        /*int U,L,R,D;  //test      
+        U=0;
+        L=1;
+        R=1;
+        D=0;*/
+        
+        if(U==1 && L==1 && R==1 && D==1)  // 0
+        {
+            for(int q=0; q<5; q++)
+            {
+                System.out.println(list.get(q));
+            }
+        }
+        else if(U==0 && L==1 && R==1 && D==1) // 1
+        {
+            for(int q=5; q<10; q++)
+            {
+                System.out.println(list.get(q));
+            }
+        }
+        else if(U==0 && L==1 && R==0 && D==1) // 2
+        {
+            for(int q=10; q<15; q++)
+            {
+                System.out.println(list.get(q));
+            }
+        }
+        else if(U==0 && L==1 && R==0 && D==0) // 3
+        { 
+            for(int q=15; q<20; q++)
+            {
+                System.out.println(list.get(q));
+            }
+        }
+        else if(U==1 && L==1 && R==0 && D==1) // 4
+        {
+            for(int q=20; q<25; q++)
+            {
+                System.out.println(list.get(q));
+            }
+        }
+        else if(U==1 && L==1 && R==0 && D==0) // 5
+        {
+            for(int q=25; q<30; q++)
+            {
+                System.out.println(list.get(q));
+            }
+        }
+        else if(U==1 && L==0 && R==0 && D==0) // 6
+        {
+            for(int q=30; q<35; q++)
+            {
+                System.out.println(list.get(q));
+            }
+        }
+        else if(U==1 && L==1 && R==1 && D==0) // 7
+        {
+            for(int q=35; q<40; q++)
+            {
+                System.out.println(list.get(q));
+            }
+        }
+        else if(U==1 && L==0 && R==1 && D==1) // 8
+        {
+            for(int q=40; q<45; q++)
+            {
+                System.out.println(list.get(q));
+            }
+        }
+        else if(U==1 && L==0 && R==1 && D==0) // 9
+        {
+            for(int q=45; q<50; q++)
+            {
+                System.out.println(list.get(q));
+            }
+        }
+        else if(U==0 && L==0 && R==1 && D==0) // 10
+        {
+            for(int q=50; q<55; q++)
+            {
+                System.out.println(list.get(q));
+            }
+        }
+        else if(U==0 && L==0 && R==1 && D==1) // 11
+        {
+            for(int q=55; q<60; q++)
+            {
+                System.out.println(list.get(q));
+            }
+        }
+        else if(U==0 && L==0 && R==0 && D==1) // 12
+        {
+            for(int q=60; q<65; q++)
+            {
+                System.out.println(list.get(q));
+            }
+        }
+        else if(U==1 && L==0 && R==0 && D==1) // 13
+        {
+            for(int q=65; q<70; q++)
+            {
+                System.out.println(list.get(q));
+            }
+        }
+        else if(U==0 && L==1 && R==1 && D==0) // 14
+        {
+            for(int q=70; q<75; q++)
+            {
+                System.out.println(list.get(q));
+            }
+        }
+        else if(U==0 && L==0 && R==0 && D==0) // 15
+        {
+            for(int q=75; q<80; q++)
+            {
+                System.out.println(list.get(q));
+            }
+        }
+                
     }
     
     public void CreateEnemy(){
@@ -345,10 +681,95 @@ public class Game {
         }   
     }
     
-    public void Gameplay()
+    public void ChapterOne() throws IOException  //nieskonczone
+    {
+        RandomAccessFile RAF = new RandomAccessFile("ChapterOne.txt","r");
+        long DL=RAF.length();
+        String line;
+        
+        System.out.println("Witaj " + heros.getName());
+        for(int i=0; i<8; i++)
+        {
+            line=RAF.readLine();
+            System.out.println(line);           
+        }
+        
+        System.out.println("");
+        
+        do
+        {
+            System.out.println("");
+            
+            MapRoom();
+            GamePlay();
+            
+            System.out.println("Gdzie chcesz iść?");
+            
+            if()
+            {
+                
+            }
+            
+            
+        }while(true);
+        
+    }
+    
+    
+    public void GamePlay()
+    {
+            System.out.println("---------------------------");
+            CreateEnemy();
+            System.out.println("---------------------------");
+            Hero();
+            System.out.println("---------------------------");
+            
+            HP1 = heros.getHP();
+            HP2 = enemy.getHP();
+            DMG1 = heros.getDMG();
+            DMG2 = enemy.getDMG();
+            
+            System.out.println("WALKA: " + licznikprzeciwnika);
+            
+             do
+            {
+                Atak();
+                
+                if(tura==0)
+                {
+                    coins-=10; //zmiejszenie pieniędzy za każdy atak przeciwnika
+                }
+
+            }while(HP2>0 && HP1>0); // pętla zakończy się po porażce jednej z postaci
+             
+            if(HP2>0 && HP1<=0)
+            {
+                System.out.println("PRZEGRAŁEŚ");
+                System.out.println("");
+                System.out.println("Chcesz jeszcze raz? Wciśnij 1");
+                again=scan.nextInt();
+                
+            }
+            else
+            {
+                HP1=heros.getHP(); //przypisanienowego HP pieniędzy expa
+                exp+=10;
+                heros.setExp(exp);
+                coins+=10;
+                heros.setMoney(coins);
+
+                if(exp==lvlmax) //przyznaje lvlup
+                {
+                    LvlUp();
+                }
+
+            } 
+    }
+    
+    public void Gameplay()  //test
     { 
 
-        do
+        /*do
         {   
             
             System.out.println("---------------------------");
@@ -412,7 +833,7 @@ public class Game {
                 }
             }
             
-        }while(true);
+        }while(true);*/
     }
     
     public void ShopList() throws IOException
