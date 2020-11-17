@@ -2,8 +2,11 @@
 package grarpg;
 
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.text.NumberFormat;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -126,7 +129,7 @@ public class Game {
     
     public void SaveCharacter() throws IOException
     {
-        RandomAccessFile RAFCharacter = new RandomAccessFile("Character.txt","rw");
+        FileWriter FW = new FileWriter("Character.txt");
         
         String line = "";
         line+=heros.getName();
@@ -147,8 +150,8 @@ public class Game {
         line+="-";
         line+=heros.getMoney();
         
-        RAFCharacter.writeChars(line);
-        RAFCharacter.close();
+        FW.write(line);
+        FW.close();
     }
     
     public void UploadCharacter() throws IOException
@@ -174,9 +177,6 @@ public class Game {
             
             heros.setName(tab[0]); 
             heros.setHeroclass(tab[1]);
-            
-            
-            
             heros.setHP(Double.parseDouble(tab[2]));  // naprawić string to double
             heros.setDMG(Double.parseDouble(tab[3]));
             heros.setLvl(Integer.parseInt(tab[4]));
