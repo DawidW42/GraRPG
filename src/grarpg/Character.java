@@ -14,12 +14,15 @@ public class Character {
         private String Weapon;
         private int  money;
     
-     public Character(String name, String nazwisko, String heroclass, int HP, int DMG, int lvl, String Broń, int money) {
+     public Character(String name, String nazwisko, String heroclass, double HP, double DMG, int lvl, int exp, String Armor, String Weapon, int money) {
         this.name = name;
         this.heroclass = heroclass;
         this.HP = HP;
         this.DMG = DMG;
         this.lvl = lvl;
+        this.exp = exp;
+        this.Armor = Armor;
+        this.money = money;
     }
 
     public int getMoney() {

@@ -28,14 +28,16 @@ public class Game {
     Random rand =  new Random();
     Scanner scan = new Scanner(System.in);
     
-    int licznikprzeciwnika=0, lvlpostac=1, again;
+    
+    
+    int licznikprzeciwnika=0, lvlpostac=1, again, exitMap;
     double HPboostHeros=1, HPboostEnemy=1, DMGboostHeros=1, DMGboostEnemy=1;
     double HP1, HP2, DMG1, DMG2;
-    int aim, zmienna, tura=0, exp=0, lvlmax=50, lvlshop=0, coins=200;
+    int aim, zmienna, tura=0, exp=0, lvlmax=50, lvlshop=0, coins;
     int enemyAmount;
-    int doorU, doorL, doorR, doorD; //0,1,2,3
+    int doorU, doorL, doorR, doorD, doorUD; //0,1,2,33
     String lineDoor="";
-    int horizontal=0, vertical=0;
+    int horizontal=0, vertical=0, U, L, R, D;
     
     public void CreateCharacter() {
         
@@ -53,6 +55,12 @@ public class Game {
         
         int klasa=scan.nextInt();
 
+        if(klasa<1 && klasa>5)
+        {
+            System.out.println("Źle wybrana klasa postaci, zostanie ci ona wybrana losowo");
+            klasa=rand.nextInt(5)+1;
+        }
+            
         switch(klasa)  //Wybór klasy postaci
         {
         
@@ -96,9 +104,9 @@ public class Game {
             case 5:
             {
                 heros.setHeroclass("GODMODE");
-                heros.setHP(9999999);
-                heros.setDMG(9999999);
-                heros.setMoney(999999999);
+                heros.setHP(9999);
+                heros.setDMG(9999);
+                heros.setMoney(9999);
 
                 heros.setWeapon("Boski kij");
                 break;
@@ -113,41 +121,120 @@ public class Game {
         weapon.setWeaponBoost(0);  //zapobiega błędowi, dodaje wartość do broni i armora
         armor.setArmorBoost(0);
         
-        heros.setArmor("Łachmany");
+        heros.setArmor("lachmany");
+    }  //zabezpieczono
+    
+    public void SaveCharacter() throws IOException
+    {
+        RandomAccessFile RAFCharacter = new RandomAccessFile("Character.txt","rw");
+        
+        String line = "";
+        line+=heros.getName();
+        line+="-";
+        line+=heros.getHeroclass();
+        line+="-";
+        line+=heros.getHP();
+        line+="-";
+        line+=heros.getDMG();
+        line+="-";
+        line+=heros.getLvl();
+        line+="-";
+        line+=heros.getExp();
+        line+="-";
+        line+=heros.getArmor();
+        line+="-";
+        line+=heros.getWeapon();
+        line+="-";
+        line+=heros.getMoney();
+        
+        RAFCharacter.writeChars(line);
+        RAFCharacter.close();
+    }
+    
+    public void UploadCharacter() throws IOException
+    {
+        RandomAccessFile RAFCharacter = new RandomAccessFile("Character.txt","r");
+
+        String[] tab = null;
+        String[] tabDouble = null;
+        String line=null;
+        int x, test2;
+        
+        line=RAFCharacter.readLine();
+        
+        
+        if(line!=null)
+        {
+            tab = line.split("-");
+            
+            for(int i=0; i<9; i++)
+            {
+                System.out.println(i + " " + tab[i]); //test
+            }
+            
+            heros.setName(tab[0]); 
+            heros.setHeroclass(tab[1]);
+            
+            
+            
+            heros.setHP(Double.parseDouble(tab[2]));  // naprawić string to double
+            heros.setDMG(Double.parseDouble(tab[3]));
+            heros.setLvl(Integer.parseInt(tab[4]));
+            heros.setExp(Integer.parseInt(tab[5]));
+            heros.setArmor(tab[6]); 
+            heros.setWeapon(tab[7]); 
+            heros.setMoney(Integer.parseInt(tab[8]));
+        }
+        else if(line==null)
+        {
+            System.out.println("Nie ma zapisu postaci");
+            CreateCharacter();
+        }
+        
+        RAFCharacter.close();
     }
     
     public void RL() //metoda sprawdzająca czy drzwi na siebie nachodzą z prawej i lewej
     {
         switch(doorR) //jeśli w poprzednim pokoju drzwi z prawej to tu z lewej
-                    {
-                        case 0:
-                        {
-                            lineDoor+="0 ";
-                            break;
-                        }
-                        case 1:
-                        {
-                            lineDoor+="1 ";
-                            break;
-                        }
-                    }
+        {
+            case 0:
+            {
+                lineDoor+="0 ";
+                break;
+            }
+            case 1:
+            {
+                lineDoor+="1 ";
+                break;
+            }
+        }
     }
     
-    public void UD() //metoda sprawdzająca czy drzwi na siebie nachodzą na dole i na górze 
+    public void UD(int wfor, int efor) //metoda sprawdzająca czy drzwi na siebie nachodzą na dole i na górze 
     {
-        switch(doorD) //jeśli w poprzednim pokoju drzwi na dole to tu u góry
-                    {
-                        case 0:
-                        {
-                            lineDoor+="0 ";
-                            break;
-                        }
-                        case 1:
-                        {
-                            lineDoor+="1 ";
-                            break;
-                        }
-                    }
+        String[] tab = null;
+        
+        String line=MapTab[wfor-1][efor];
+        
+        tab = line.split(" ");
+        
+        doorUD = Integer.parseInt(tab[3]);
+        
+        switch(doorUD) //jeśli w poprzednim pokoju drzwi z dołu to tu u góry
+        {
+            case 0:
+            {
+                lineDoor+="0 ";
+                break;
+            }
+            case 1:
+            {
+                lineDoor+="1 ";
+                break;
+            }
+        }
+        
     }
     
     public void RandR() //randomowe drzwi z prawej
@@ -186,7 +273,7 @@ public class Game {
                     }
     }
     
-    public void Map() throws IOException //przemyslec 
+    public void Map() throws IOException 
     {
  
         RandomAccessFile RAF = new RandomAccessFile("MapRoom.txt","r");
@@ -200,15 +287,16 @@ public class Game {
             list.add(line);
         }
               
-        //int doorU, doorL, doorR, doorD; //0,1,2,3
+        // doorU, doorL, doorR, doorD; //0,1,2,3
         
-        for(int w=0; w<5; w++)
+        for(int wfor=0; wfor<5; wfor++)
         {
-            for(int e=0; e<5; e++)
+            for(int efor=0; efor<5; efor++)
             {
-                if(w==0 && e==0) //tab[0][0]
+                if(wfor==0 && efor==0) //tab[0][0]
                 {
                     lineDoor+="0 ";
+                    
                     lineDoor+="0 ";
                     
                     RandR();
@@ -216,7 +304,7 @@ public class Game {
                     RandD();
                    
                 }              
-                else if(w==0 && e!=0 && e!=4) //tab[0][1-3]
+                else if(wfor==0 && efor!=0 && efor!=4) //tab[0][1-3]
                 {
                     lineDoor+="0 ";
                     
@@ -227,7 +315,7 @@ public class Game {
                     RandD();
                     
                 }               
-                else if(w==0 && e==4)
+                else if(wfor==0 && efor==4)
                 {
                     lineDoor+="0 ";
                     
@@ -237,9 +325,9 @@ public class Game {
                     
                     RandD();
                 }
-                else if(w!=0 && w!=4 && e==0)
+                else if(wfor!=0 && wfor!=4 && efor==0)
                 {
-                    UD();
+                    UD(wfor, efor);
                     
                     lineDoor+="0 ";  
                     
@@ -248,9 +336,9 @@ public class Game {
                     RandD();
                     
                 }
-                else if(w!=0 && w!=4 && e!=0 && e!=4)
+                else if(wfor!=0 && wfor!=4 && efor!=0 && efor!=4)
                 {
-                    UD();
+                    UD(wfor, efor);
                     
                     RL();
                     
@@ -258,9 +346,9 @@ public class Game {
                     
                     RandD();
                 }
-                else if(w!=0 && w!=4 && e==4)
+                else if(wfor!=0 && wfor!=4 && efor==4)
                 {
-                    UD();
+                    UD(wfor, efor);
                     
                     RL();
                     
@@ -269,9 +357,9 @@ public class Game {
                     RandD();
                     
                 }
-                else if(w==4 && e==0)
+                else if(wfor==4 && efor==0)
                 {
-                    UD();
+                    UD(wfor, efor);
                     
                     lineDoor+="0 ";
                     
@@ -280,9 +368,9 @@ public class Game {
                     lineDoor+="0 ";
                     
                 }
-                else if(w==4 && e!=0 && e!=4)
+                else if(wfor==4 && efor!=0 && efor!=4)
                 {
-                    UD();
+                    UD(wfor, efor);
                     
                     RL();
                     
@@ -291,9 +379,9 @@ public class Game {
                     lineDoor+="0 ";
                     
                 }
-                else if(w==4 && e==4)
+                else if(wfor==4 && efor==4)
                 {
-                    UD();
+                    UD(wfor, efor);
                     
                     RL();
                     
@@ -302,11 +390,15 @@ public class Game {
                     lineDoor+="0 ";
                     
                 }
-                              
-                MapTab[w][e]=lineDoor;
+                                  
+                MapTab[wfor][efor]=lineDoor;
                 lineDoor="";
             }
-        }
+            
+            
+            
+            
+        }       
         
     }
     
@@ -316,12 +408,13 @@ public class Game {
         String[] tab = null;
         
         String line=MapTab[vertical][horizontal];
+        
         tab = line.split(" ");
         
-        int U=Integer.parseInt(tab[0]);
-        int L=Integer.parseInt(tab[1]);
-        int R=Integer.parseInt(tab[2]);
-        int D=Integer.parseInt(tab[3]);
+        U=Integer.parseInt(tab[0]);
+        L=Integer.parseInt(tab[1]);
+        R=Integer.parseInt(tab[2]);
+        D=Integer.parseInt(tab[3]);
         
         /*int U,L,R,D;  //test      
         U=0;
@@ -440,6 +533,8 @@ public class Game {
             {
                 System.out.println(list.get(q));
             }
+            
+            System.out.println("-Mała ta skrytka");
         }
                 
     }
@@ -505,49 +600,65 @@ public class Game {
         System.out.println("HP: " + heros.getHP() + " + " + armor.getArmorBoost());
         System.out.println("Broń: " + heros.getWeapon());
         System.out.println("DMG: " + heros.getDMG() + " + " + weapon.getWeaponBoost());
+        System.out.println("Money: " + heros.getMoney());
         System.out.println("");
     }
     
     public void LvlUp(){
         
-        int x = rand.nextInt(1);
+        int x = rand.nextInt(2);
         double HPzmienna, DMGzmienna;
         
-        if(x==0)  //randomowy boost przeciwników po lvlup
+        switch(x)
         {
-             HPboostEnemy+=0.2;
-        }
-        else if(x==1)
-        {
-             DMGboostEnemy+=0.2;
-        }
-        
+            case 0:  //randomowy boost przeciwników po lvlup
+            {
+                 HPboostEnemy+=0.2;
+                 break;
+            }
+            case 1:
+            {
+                 DMGboostEnemy+=0.2;
+                 break;
+            }
+    }
         System.out.println("LVL UP");
         System.out.println("Chcesz ulepzyć HP czy DMG?");
         System.out.println("1-HP    2-DMG");
         int zmienna = scan.nextInt();
         
-        if(zmienna==1) //wybór boosta przez gracza dla postaci 
+        if(zmienna!=1 || zmienna!=2)
         {
-            HPboostHeros+=0.2;
-            HPzmienna=heros.getHP();
-            HPzmienna*=HPboostHeros;
-            heros.setHP(HPzmienna);
-        }
-        else if(zmienna==2)
-        {
-            DMGboostHeros+=0.2;
-            DMGzmienna=heros.getDMG();
-            DMGzmienna*=DMGboostHeros;
-            heros.setDMG(DMGzmienna);
+            System.out.println("Żle wybrany boost, zostanie on wybrany losowo");
+            zmienna=rand.nextInt(2)+1;
         }
         
+        switch(zmienna)
+        {
+            case 1: //wybór boosta przez gracza dla postaci 
+            {
+                HPboostHeros+=0.2;
+                HPzmienna=heros.getHP();
+                HPzmienna*=HPboostHeros;
+                heros.setHP(HPzmienna);
+                break;
+            }
+
+            case 2:
+            {
+                DMGboostHeros+=0.2;
+                DMGzmienna=heros.getDMG();
+                DMGzmienna*=DMGboostHeros;
+                heros.setDMG(DMGzmienna);
+                break;
+            }
+        }
         lvlmax*=2;  //zwiększa porzebny exp do lvlupa      
         lvlpostac++;
         
-    }
+    }  //zabezpieczono
     
-    public void Atak()
+    public void Atak() //zabezpieczono
     {
         aim=rand.nextInt(100)+1;
         
@@ -558,62 +669,87 @@ public class Game {
                 System.out.println("1-Atak precyzyjny  |Szansa trafienia 80%   DMG 80% |");
                 System.out.println("2-Atak normalny    |Szansa trafienia 65%   DMG 100%|");
                 System.out.println("3-Atak ciężki      |Szansa trafienia 50%   DMG 120%|");
+                
+                do
+                {
                 zmienna = scan.nextInt();
 
-                switch(zmienna) // wybór ataku
-                {
-                    case 1:
+                    switch(zmienna) // wybór ataku
                     {
-                        if(aim<=80)
+                        case 1:
                         {
-                            System.out.print(HP2 + " - " + "(" + DMG1 + " + " + weapon.getWeaponBoost() + "}" + "*0.8 = ");
-                            HP2=HP2-((DMG1 + weapon.getWeaponBoost())*0.8);
-                            System.out.println(HP2 + " : HP Przeciwnika");
-                            System.out.println("");
+                            if(aim<=80)
+                            {
+                                System.out.print(HP2 + " - " + "(" + DMG1 + " + " + weapon.getWeaponBoost() + "}" + "*0.8 = ");
+                                HP2=HP2-((DMG1 + weapon.getWeaponBoost())*0.8);
+                                System.out.println(HP2 + " : HP Przeciwnika");
+                                System.out.println("");
+                            }
+                            else if(aim>80)
+                            {
+                                System.out.println("");
+                                System.out.println("PUDŁO  " + HP2 + " : HP Przeciwnika");
+                                System.out.println("");
+                            }
+                            break;
                         }
-                        else if(aim>80)
+                        case 2:
                         {
-                            System.out.println("");
-                            System.out.println("PUDŁO  " + HP2 + " : HP Przeciwnika");
-                            System.out.println("");
+                            if(aim<=65)
+                            {
+                                System.out.print(HP2 + " - " + "(" + DMG1 + " + " + weapon.getWeaponBoost() + "}" + " = ");
+                                HP2=HP2-(DMG1 + weapon.getWeaponBoost());
+                                System.out.println(HP2 + " : HP Przeciwnika");
+                                System.out.println("");
+                            }
+                            else if(aim>65)
+                            {
+                                System.out.println("");
+                                System.out.println("PUDŁO  " + HP2 + " : HP Przeciwnika");
+                                System.out.println("");
+                            }
+                            break;
                         }
-                        break;
-                    }
-                    case 2:
-                    {
-                        if(aim<=65)
+                        case 3:
                         {
-                            System.out.print(HP2 + " - " + "(" + DMG1 + " + " + weapon.getWeaponBoost() + "}" + " = ");
-                            HP2=HP2-(DMG1 + weapon.getWeaponBoost());
-                            System.out.println(HP2 + " : HP Przeciwnika");
-                            System.out.println("");
+                            if(aim<=50)
+                            {
+                                System.out.print(HP2 + " - " + "(" + DMG1 + " + " + weapon.getWeaponBoost() + "}" + "*1.2 = ");
+                                HP2=HP2-((DMG1 + weapon.getWeaponBoost())*1.2);
+                                System.out.println(HP2 + " : HP Przeciwnika");
+                                System.out.println("");
+                            }
+                            else if(aim>50)
+                            {
+                                System.out.println("");
+                                System.out.println("PUDŁO  " + HP2 + " : HP Przeciwnika");
+                                System.out.println("");
+                            }
+                            break;
                         }
-                        else if(aim>65)
+                        case 997:
                         {
-                            System.out.println("");
-                            System.out.println("PUDŁO  " + HP2 + " : HP Przeciwnika");
-                            System.out.println("");
-                        }
-                        break;
-                    }
-                    case 3:
-                    {
-                        if(aim<=50)
-                        {
+                            
                             System.out.print(HP2 + " - " + "(" + DMG1 + " + " + weapon.getWeaponBoost() + "}" + "*1.2 = ");
-                            HP2=HP2-((DMG1 + weapon.getWeaponBoost())*1.2);
+                            HP2=HP2-((DMG1 + weapon.getWeaponBoost())*1.5);
                             System.out.println(HP2 + " : HP Przeciwnika");
                             System.out.println("");
+                            
                         }
-                        else if(aim>50)
-                        {
-                            System.out.println("");
-                            System.out.println("PUDŁO  " + HP2 + " : HP Przeciwnika");
-                            System.out.println("");
-                        }
+                    }
+                    
+                    if(zmienna<1 || zmienna>4)
+                    {
+                        System.out.println("Niepoprawnie wybrano atak, zrób to jeszcze raz");
+                        System.out.println("");
+                    }
+                    else if(zmienna>1 || zmienna<4)
+                    {
                         break;
                     }
-                }
+                    
+                }while(true);
+                
                 tura++;
                 break;
             }
@@ -681,7 +817,7 @@ public class Game {
         }   
     }
     
-    public void ChapterOne() throws IOException  //nieskonczone
+    public void ChapterOne() throws IOException  //zabezpieczone
     {
         RandomAccessFile RAF = new RandomAccessFile("ChapterOne.txt","r");
         long DL=RAF.length();
@@ -700,30 +836,127 @@ public class Game {
         {
             System.out.println("");
             
-            MapRoom();
+            
             GamePlay();
+            MapRoom();
             
             System.out.println("Gdzie chcesz iść?");
             
-            if()
+            if(U==1)
             {
-                
+                System.out.println("1-Idź w górę");
             }
+            if(L==1)
+            {
+                System.out.println("2-Idź w lewo");
+            }
+            if(R==1)
+            {
+                System.out.println("3-Idź w prawo");
+            }
+            if(D==1)
+            {
+                System.out.println("4-Idź w dół");
+            }
+            System.out.println("5-Uciekaj do miasteczka");
             
+            do
+            {
+                int way=scan.nextInt();
+                
+                if(way==1 && U==1)
+                {
+                    vertical--;
+                    break;
+                }
+                else if(way==1 && U==0)
+                {
+                    System.out.println("Tam nie ma przejścia, wybierz inną drogę");
+                }
+                else if(way==2 && L==1)
+                {
+                    horizontal--;
+                    break;
+                }
+                else if(way==2 && L==0)
+                {
+                    System.out.println("Tam nie ma przejścia, wybierz inną drogę");
+                }
+                else if(way==3 && R==1)
+                {
+                    horizontal++;
+                    break;
+                }
+                else if(way==3 && R==0)
+                {
+                    System.out.println("Tam nie ma przejścia, wybierz inną drogę");
+                }
+                else if(way==4 && D==1)
+                {
+                    vertical++;
+                    break;
+                }
+                else if(way==4 && D==0)
+                {
+                    System.out.println("Tam nie ma przejścia, wybierz inną drogę");
+                }
+                else if(way==5)
+                {
+                    exitMap=1;
+                    break;
+                }
+                
+            }while(true);
             
+            if(exitMap==1)
+            {
+                break;
+            }
+                   
         }while(true);
         
     }
-    
-    
+      
     public void GamePlay()
     {
+        int AmountEnemies = rand.nextInt(101);
+        int x=0, coinsH;
+        
+        if(AmountEnemies>=0 && AmountEnemies<15)
+        {
+            x=1;
+        }
+        else if(AmountEnemies>=15 && AmountEnemies<40)
+        {
+            x=2;
+        }
+        else if(AmountEnemies>=40 && AmountEnemies<60)
+        {
+            x=3;
+        }
+        else if(AmountEnemies>=60 && AmountEnemies<75)
+        {
+            x=4;
+        }
+        else if(AmountEnemies>=75 && AmountEnemies<95)
+        {
+            x=5;
+        }
+        else if(AmountEnemies>=95 && AmountEnemies<100)
+        {
+            x=6;
+        }
+        
+        for(int i=0; i<x; i++)
+        {
+            System.out.println("Liczba walk na arenie " + i + "/" + x);
+            
             System.out.println("---------------------------");
             CreateEnemy();
             System.out.println("---------------------------");
             Hero();
             System.out.println("---------------------------");
-            
+            coins=200;
             HP1 = heros.getHP();
             HP2 = enemy.getHP();
             DMG1 = heros.getDMG();
@@ -752,88 +985,24 @@ public class Game {
             }
             else
             {
-                HP1=heros.getHP(); //przypisanienowego HP pieniędzy expa
+                
                 exp+=10;
                 heros.setExp(exp);
                 coins+=10;
-                heros.setMoney(coins);
+                coinsH=heros.getMoney();
+                coinsH+=coins;
+                heros.setMoney(coinsH);
 
                 if(exp==lvlmax) //przyznaje lvlup
                 {
                     LvlUp();
                 }
 
-            } 
-    }
-    
-    public void Gameplay()  //test
-    { 
-
-        /*do
-        {   
-            
-            System.out.println("---------------------------");
-            CreateEnemy();
-            System.out.println("---------------------------");
-            Hero();
-            System.out.println("---------------------------");
-            
-            HP1 = heros.getHP();
-            HP2 = enemy.getHP();
-            DMG1 = heros.getDMG();
-            DMG2 = enemy.getDMG();
-            
-            System.out.println("WALKA: " + licznikprzeciwnika);
-            
-            do
-            {
-                Atak();
-                
-                if(tura==0)
-                {
-                    coins-=10; //zmiejszenie pieniędzy za każdy atak przeciwnika
-                }
-
-            }while(HP2>0 && HP1>0); // pętla zakończy się po porażce jednej z postaci
-                      
-            
-            if(HP2>0 && HP1<=0)
-            {
-                System.out.println("PRZEGRAŁEŚ");
-                System.out.println("");
-                System.out.println("Chcesz jeszcze raz? Wciśnij 1");
-                again=scan.nextInt();
-                
-                break;
-            }
-            else
-            {
-                HP1=heros.getHP(); //przypisanienowego HP pieniędzy expa
-                exp+=10;
-                heros.setExp(exp);
-                coins+=10;
-                heros.setMoney(coins);
-
-                if(exp==lvlmax) //przyznaje lvlup
-                {
-                    LvlUp();
-                }
-
-                System.out.println("1-Poddaj się    2-SKLEP");
-
-                int zmienna = scan.nextInt();
-
-                if(zmienna==1)
-                {
-                    break;
-                }
-                else if(zmienna==2)
-                {
-                    Shop();
-                }
             }
             
-        }while(true);*/
+            HP1=heros.getHP(); //przypisanienowego HP pieniędzy expa
+            
+        }     
     }
     
     public void ShopList() throws IOException
@@ -858,164 +1027,212 @@ public class Game {
             lineWeapon=RAF2.readLine();
             listWeapon.add(lineWeapon);
         }
+        
+        RAF1.close();
+        RAF2.close();
     }
     
-    public void Shop()
+    public void Shop()  //zabezpieczone
     {
         System.out.println("WITAJ W SKLEPIE!");
         System.out.println("1-Sklep z Armorem  2-Sklep z Weapons");
-        int x=scan.nextInt();
-        
+       
         String line=null, line2=null, weaponName, armorName;
         int armorHP, weaponDMG, armorPrice, weaponPrice;      
         int meter=1, y, exit=0;
         
         String[] tab = null;
-                
-        switch(x) //wybór sklepu
+          
+        do
         {
-            case 1:
+            int x=scan.nextInt();
+            
+            switch(x) //wybór sklepu
             {
-                for(int i=lvlshop; i<(lvlshop+3); i++) //wypisanie przedmiotów do sklepu
+                case 1:
                 {
-                    System.out.println("   Zbroja-HP-Cena");
-                    line = (String) listArmor.get(i);
-                    System.out.print(meter + ". ");
-                    System.out.println(line);
-                    meter++;
-                }
-                
-                do
-                {
-                System.out.println("4-Wyjdź ze sklepu");
-                                System.out.println("");
-                System.out.println("Co kupujesz?");
-                y=scan.nextInt();
-                
-                switch(y) //wybór przedmiotu ze sklepu
-                {
-                    case 1:
+                    for(int i=lvlshop; i<(lvlshop+3); i++) //wypisanie przedmiotów do sklepu
                     {
-                        line2 = (String) listArmor.get(0);
-                        tab = line2.split(" ");
-                        break;
+                        System.out.println("   Zbroja-HP-Cena");
+                        line = (String) listArmor.get(i);
+                        System.out.print(meter + ". ");
+                        System.out.println(line);
+                        meter++;
                     }
-                    case 2:
+
+                    do
                     {
-                        line2 = (String) listArmor.get(1);
-                        tab = line2.split(" ");
-                        break;
+                    System.out.println("4-Wyjdź ze sklepu");
+                    System.out.println("");
+                    System.out.println("Co kupujesz?");
+                    
+                    do
+                    {
+                    y=scan.nextInt();
+
+                        switch(y) //wybór przedmiotu ze sklepu
+                        {
+                            case 1:
+                            {
+                                line2 = (String) listArmor.get(0);
+                                tab = line2.split(" ");
+                                break;
+                            }
+                            case 2:
+                            {
+                                line2 = (String) listArmor.get(1);
+                                tab = line2.split(" ");
+                                break;
+                            }
+                            case 3:
+                            {
+                                line2 = (String) listArmor.get(2);
+                                tab = line2.split(" ");
+                                break;
+                            }
+                            case 4:
+                            {
+                                line2 = "Test 0 0";   //zapobiega błedowi gdzie tab[] nic nie przypisuje
+                                tab = line2.split(" ");
+                                exit=1;
+                            } 
+                        }
+                        
+                        if(y!=1 || y!=2)
+                        {
+                            System.out.println("Niepoprawnie wybrano przedmiot, spróbuj jeszcze raz");
+                            System.out.println("");
+                        }
+                        else if(y==1 || y==2)
+                        {
+                            break;
+                        }
+                        
+                    }while(true);
+                    
+                    armorName=tab[0];  // przypisanie wartości z pliku do zmiennych
+                    armorHP=Integer.parseInt(tab[1]);
+                    armorPrice=Integer.parseInt(tab[2]);
+
+                    if(heros.getMoney()>=armorPrice) //jeśli warunek jest spełniony zapisuje cechy przedmiotu do obiektu 
+                    {
+                    armor.setArmorName(armorName);
+                    armor.setArmorBoost(armorHP);               
+                    armor.setArmorPrice(armorPrice);
+
+                    heros.setArmor(armorName);
+
+                    break;
                     }
-                    case 3:
+                    else if(exit==1) //wyjście przy braku zakupu
                     {
-                        line2 = (String) listArmor.get(2);
-                        tab = line2.split(" ");
-                        break;
+                        exit=0;
+                        break;     
                     }
-                    case 4:
+                    else if(heros.getMoney()<=armorPrice)
                     {
-                        line2 = "Test 0 0";   //zapobiega błedowi gdzie tab[] nic nie przypisuje
-                        tab = line2.split(" ");
-                        exit=1;
-                    } 
-                }
-                                
-                armorName=tab[0];  // przypisanie wartości z pliku do zmiennych
-                armorHP=Integer.parseInt(tab[1]);
-                armorPrice=Integer.parseInt(tab[2]);
-                
-                if(heros.getMoney()>=armorPrice) //jeśli warunek jest spełniony zapisuje cechy przedmiotu do obiektu 
-                {
-                armor.setArmorName(armorName);
-                armor.setArmorBoost(armorHP);               
-                armor.setArmorPrice(armorPrice);
-                
-                heros.setArmor(armorName);
-                
-                break;
-                }
-                else if(exit==1) //wyjście przy braku zakupu
-                {
-                    exit=0;
-                    break;     
-                }
-                else
-                {
-                    System.out.println("Nie masz tyle pieniędzy wybierz coś innego"); //zapobiega kupna przedmiotu bez pieniędzy
-                }
-                
-                }while(true);
-                
-                break;
-            }
-            case 2:  
-            {
-                for(int j=lvlshop; j<(lvlshop+3); j++) //wypisanie przedmiotów do sklepu
-                {
-                    System.out.println("   Broń-DMG-Cena");
-                    System.out.print(meter + ". ");
-                    line = (String) listWeapon.get(j);
-                    System.out.println(line);
-                    meter++; //licznik przedmiotów
-                }
-                System.out.println("");
-                System.out.println("4-Wyjdź ze sklepu");
-                System.out.println("Co kupujesz?");
-                y=scan.nextInt();
-                
-                switch(y) 
-                {
-                    case 1:
-                    {
-                        line2 = (String) listWeapon.get(0);
-                        tab = line2.split(" ");
-                        break;
+                        System.out.println("Nie masz tyle pieniędzy wybierz coś innego"); //zapobiega kupna przedmiotu bez pieniędzy
                     }
-                    case 2:
-                    {
-                        line2 = (String) listWeapon.get(1);
-                        tab = line2.split(" ");
-                        break;
-                    }
-                    case 3:
-                    {
-                        line2 = (String) listWeapon.get(2);
-                        tab = line2.split(" ");
-                        break;
-                    }
-                    case 4: 
-                    {
-                        line2 = "Test 0 0";   //zapobiega błedowi gdzie tab[] nic nie przypisuje
-                        tab = line2.split(" ");
-                        exit=1;
-                    } 
-                }
-                
-                weaponName=tab[0]; // przypisanie wartości z pliku do zmiennych
-                weaponDMG=Integer.parseInt(tab[1]);
-                weaponPrice=Integer.parseInt(tab[2]);
-                
-                if(heros.getMoney()>=weaponPrice) //jeśli warunek jest spełniony zapisuje cechy przedmiotu do obiektu
-                {
-                weapon.setWeaponName(weaponName);
-                weapon.setWeaponBoost(weaponPrice);
-                weapon.setWeaponPrice(weaponPrice);
-                
-                heros.setWeapon(weaponName);
-                }
-                else if(exit==1) //wyjście przy braku zakupu
-                {
-                    exit=0;
+
+                    }while(true);
+
                     break;
                 }
-                else
+                case 2:  
                 {
-                    System.out.println("Nie masz tyle pieniędzy wybierz coś innego");  //zapobiega kupna przedmiotu bez pieniędzy
+                    for(int j=lvlshop; j<(lvlshop+3); j++) //wypisanie przedmiotów do sklepu
+                    {
+                        System.out.println("   Broń-DMG-Cena");
+                        System.out.print(meter + ". ");
+                        line = (String) listWeapon.get(j);
+                        System.out.println(line);
+                        meter++; //licznik przedmiotów
+                    }
+                    System.out.println("");
+                    System.out.println("4-Wyjdź ze sklepu");
+                    System.out.println("Co kupujesz?");
+                    
+                    do
+                    {
+                        y=scan.nextInt();
+
+                        switch(y) 
+                        {
+                            case 1:
+                            {
+                                line2 = (String) listWeapon.get(0);
+                                tab = line2.split(" ");
+                                break;
+                            }
+                            case 2:
+                            {
+                                line2 = (String) listWeapon.get(1);
+                                tab = line2.split(" ");
+                                break;
+                            }
+                            case 3:
+                            {
+                                line2 = (String) listWeapon.get(2);
+                                tab = line2.split(" ");
+                                break;
+                            }
+                            case 4: 
+                            {
+                                line2 = "Test 0 0";   //zapobiega błedowi gdzie tab[] nic nie przypisuje
+                                tab = line2.split(" ");
+                                exit=1;
+                            } 
+                        }
+                        if(y!=1 || y!=2)
+                        {
+                            System.out.println("Niepoprawnie wybrano przedmiot, spróbuj jeszcze raz");
+                            System.out.println("");
+                        }
+                        else if(y==1 || y==2)
+                        {
+                            break;
+                        }
+                        
+                    }while(true);
+                    
+                    weaponName=tab[0]; // przypisanie wartości z pliku do zmiennych
+                    weaponDMG=Integer.parseInt(tab[1]);
+                    weaponPrice=Integer.parseInt(tab[2]);
+
+                    if(heros.getMoney()>=weaponPrice) //jeśli warunek jest spełniony zapisuje cechy przedmiotu do obiektu
+                    {
+                    weapon.setWeaponName(weaponName);
+                    weapon.setWeaponBoost(weaponPrice);
+                    weapon.setWeaponPrice(weaponPrice);
+
+                    heros.setWeapon(weaponName);
+                    }
+                    else if(exit==1) //wyjście przy braku zakupu
+                    {
+                        exit=0;
+                        break;
+                    }
+                    else
+                    {
+                        System.out.println("Nie masz tyle pieniędzy wybierz coś innego");  //zapobiega kupna przedmiotu bez pieniędzy
+                    }
+
+                    break;
                 }
                 
+            }
+            
+            if(x!=1 || x!=2)
+            {
+                System.out.println("Niepoprawnie wybrano sklep, zrób to jeszcze raz");
+                System.out.println("");
+            }
+            else if(x==1 || x==2)
+            {
                 break;
             }
-        }
+            
+        }while(true);
         
         meter=1;
         lvlshop+=3; //pomaga w wczytaniu kolejnych przedmiotów ze sklepu
