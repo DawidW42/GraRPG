@@ -9,6 +9,7 @@ import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
@@ -44,7 +45,10 @@ public class Game {
     
     public void CreateCharacter() {
         
+        int klasa=0;
+        
         System.out.println("Wybierz imię: ");
+        
         String name=scan.next();
 
         heros.setName(name);
@@ -56,13 +60,27 @@ public class Game {
         System.out.println("3-Człowiek");
         System.out.println("4-Mag");
         
-        int klasa=scan.nextInt();
-
-        if(klasa<1 && klasa>5)
+        do
         {
-            System.out.println("Źle wybrana klasa postaci, zostanie ci ona wybrana losowo");
-            klasa=rand.nextInt(5)+1;
-        }
+            try
+            {
+                klasa=scan.nextInt();
+            }
+            catch(InputMismatchException e)
+            {
+                scan.nextLine();
+            }
+            
+            if(klasa>0 && klasa<6)
+            {
+                break;
+            }
+            else
+            {
+                System.out.println("Niepoprawnie wybrana opcja, spróbuj jeszcze raz");
+            }
+            
+        }while(true);
             
         switch(klasa)  //Wybór klasy postaci
         {
@@ -159,9 +177,7 @@ public class Game {
         RandomAccessFile RAFCharacter = new RandomAccessFile("Character.txt","r");
 
         String[] tab = null;
-        String[] tabDouble = null;
         String line=null;
-        int x, test2;
         
         line=RAFCharacter.readLine();
         
@@ -625,13 +641,28 @@ public class Game {
         System.out.println("LVL UP");
         System.out.println("Chcesz ulepzyć HP czy DMG?");
         System.out.println("1-HP    2-DMG");
-        int zmienna = scan.nextInt();
         
-        if(zmienna!=1 || zmienna!=2)
+        do
         {
-            System.out.println("Żle wybrany boost, zostanie on wybrany losowo");
-            zmienna=rand.nextInt(2)+1;
-        }
+            try
+            {
+                zmienna=scan.nextInt();
+            }
+            catch(InputMismatchException e)
+            {
+                scan.nextLine();
+            }
+            
+            if(zmienna>0 && zmienna<3)
+            {
+                break;
+            }
+            else
+            {
+                System.out.println("Niepoprawnie wybrana opcja, spróbuj jeszcze raz");
+            }
+            
+        }while(true);
         
         switch(zmienna)
         {
@@ -672,8 +703,26 @@ public class Game {
                 
                 do
                 {
-                zmienna = scan.nextInt();
+                    try
+                    {
+                        zmienna=scan.nextInt();
+                    }
+                    catch(InputMismatchException e)
+                    {
+                        scan.nextLine();
+                    }
 
+                    if(zmienna>0 && zmienna<5)
+                    {
+                        break;
+                    }
+                    else
+                    {
+                        System.out.println("Niepoprawnie wybrana opcja, spróbuj jeszcze raz");
+                    }
+
+                }while(true);
+                
                     switch(zmienna) // wybór ataku
                     {
                         case 1:
@@ -727,7 +776,7 @@ public class Game {
                             }
                             break;
                         }
-                        case 997:
+                        case 4:
                         {
                             
                             System.out.print(HP2 + " - " + "(" + DMG1 + " + " + weapon.getWeaponBoost() + "}" + "*1.2 = ");
@@ -738,17 +787,7 @@ public class Game {
                         }
                     }
                     
-                    if(zmienna<1 || zmienna>4)
-                    {
-                        System.out.println("Niepoprawnie wybrano atak, zrób to jeszcze raz");
-                        System.out.println("");
-                    }
-                    else if(zmienna>1 || zmienna<4)
-                    {
-                        break;
-                    }
                     
-                }while(true);
                 
                 tura++;
                 break;
@@ -979,8 +1018,29 @@ public class Game {
             {
                 System.out.println("PRZEGRAŁEŚ");
                 System.out.println("");
-                System.out.println("Chcesz jeszcze raz? Wciśnij 1");
+                System.out.println("Chcesz jeszcze raz? Wciśnij 1    Wciśnij 2 jeśli kończysz grę");
                 again=scan.nextInt();
+                do
+                {
+                    try
+                    {
+                        again=scan.nextInt();
+                    }
+                    catch(InputMismatchException e)
+                    {
+                        scan.nextLine();
+                    }
+
+                    if(again>0 && again<3)
+                    {
+                        break;
+                    }
+                    else
+                    {
+                        System.out.println("Niepoprawnie wybrana opcja, spróbuj jeszcze raz");
+                    }
+
+                }while(true);
                 
             }
             else
@@ -1039,13 +1099,31 @@ public class Game {
        
         String line=null, line2=null, weaponName, armorName;
         int armorHP, weaponDMG, armorPrice, weaponPrice;      
-        int meter=1, y, exit=0;
+        int meter=1,x=0,y=0, exit=0;
         
         String[] tab = null;
           
         do
         {
-            int x=scan.nextInt();
+            try
+            {
+                x=scan.nextInt();
+            }
+            catch(InputMismatchException e)
+            {
+                scan.nextLine();
+            }
+
+            if(x>0 && x<3)
+            {
+                break;
+            }
+            else
+            {
+                System.out.println("Niepoprawnie wybrana opcja, spróbuj jeszcze raz");
+            }
+
+        }while(true);
             
             switch(x) //wybór sklepu
             {
@@ -1068,6 +1146,26 @@ public class Game {
                     
                     do
                     {
+                        try
+                        {
+                            y=scan.nextInt();
+                        }
+                        catch(InputMismatchException e)
+                        {
+                            scan.nextLine();
+                        }
+
+                        if(y>0 && y<5)
+                        {
+                            break;
+                        }
+                        else
+                        {
+                            System.out.println("Niepoprawnie wybrana opcja, spróbuj jeszcze raz");
+                        }
+
+                    }while(true);
+                    
                     y=scan.nextInt();
 
                         switch(y) //wybór przedmiotu ze sklepu
@@ -1098,17 +1196,7 @@ public class Game {
                             } 
                         }
                         
-                        if(y!=1 || y!=2)
-                        {
-                            System.out.println("Niepoprawnie wybrano przedmiot, spróbuj jeszcze raz");
-                            System.out.println("");
-                        }
-                        else if(y==1 || y==2)
-                        {
-                            break;
-                        }
-                        
-                    }while(true);
+                      
                     
                     armorName=tab[0];  // przypisanie wartości z pliku do zmiennych
                     armorHP=Integer.parseInt(tab[1]);
@@ -1154,7 +1242,26 @@ public class Game {
                     
                     do
                     {
-                        y=scan.nextInt();
+                        try
+                        {
+                            y=scan.nextInt();
+                        }
+                        catch(InputMismatchException e)
+                        {
+                            scan.nextLine();
+                        }
+
+                        if(y>0 && y<5)
+                        {
+                            break;
+                        }
+                        else
+                        {
+                            System.out.println("Niepoprawnie wybrana opcja, spróbuj jeszcze raz");
+                        }
+
+                    }while(true);
+
 
                         switch(y) 
                         {
@@ -1183,17 +1290,7 @@ public class Game {
                                 exit=1;
                             } 
                         }
-                        if(y!=1 || y!=2)
-                        {
-                            System.out.println("Niepoprawnie wybrano przedmiot, spróbuj jeszcze raz");
-                            System.out.println("");
-                        }
-                        else if(y==1 || y==2)
-                        {
-                            break;
-                        }
                         
-                    }while(true);
                     
                     weaponName=tab[0]; // przypisanie wartości z pliku do zmiennych
                     weaponDMG=Integer.parseInt(tab[1]);
@@ -1222,17 +1319,6 @@ public class Game {
                 
             }
             
-            if(x!=1 || x!=2)
-            {
-                System.out.println("Niepoprawnie wybrano sklep, zrób to jeszcze raz");
-                System.out.println("");
-            }
-            else if(x==1 || x==2)
-            {
-                break;
-            }
-            
-        }while(true);
         
         meter=1;
         lvlshop+=3; //pomaga w wczytaniu kolejnych przedmiotów ze sklepu

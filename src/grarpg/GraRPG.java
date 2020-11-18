@@ -2,6 +2,7 @@
 package grarpg;
 
 import java.io.IOException;
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 
@@ -14,7 +15,8 @@ public class GraRPG {
         Game R = new Game();
         Scanner scanMain=new Scanner(System.in);
         
-        
+        int x=0;
+                
         R.ShopList();
         
         do
@@ -30,8 +32,16 @@ public class GraRPG {
                 System.out.println("1-Wczytaj postać      2-Stwórz nową postać");
                 do
                 {
-                    int x=scanMain.nextInt();
-                    
+                    try
+                    {
+                        x=scanMain.nextInt();
+                    }
+                    catch(InputMismatchException e)
+                    {
+                        System.out.println("Błąd");
+                        scanMain.nextLine();
+                    }
+                            
                     switch(x)
                     {
                         case 1:
@@ -71,10 +81,11 @@ public class GraRPG {
                 
         if(R.again==1)
         {
-            System.out.println("Koniec gry");
+            System.out.println("Nowa gra");
         }
-        else
+        else if(R.again==2)
         {
+            System.out.println("Koniec gry");
             break;
         }
         
